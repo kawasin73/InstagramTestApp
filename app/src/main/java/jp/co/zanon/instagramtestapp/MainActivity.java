@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private InstagramList mList;
     private ParseInstagramJson parseInstagramJson;
 
+    private boolean isLoading = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,9 +54,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
+        mRecyclerView.addOnScrollListener(new EndlessScrollListener((GridLayoutManager) mRecyclerView.getLayoutManager()) {
+            @Override
+            public void onLoadMore(int current_page) {
+                if (!MainActivity.this.isLoading)
+                    startLoading();
+            }
+        });
+
         setAdapter();
 
-        getRequest();
+        startLoading();
 
     }
 
@@ -64,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setAdapter(adapter);
     }
 
-    public void getRequest(){
+    public void startLoading(){
         getLoaderManager().restartLoader(0, null, this);
     }
 
@@ -77,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<String> onCreateLoader(int id, Bundle args) {
         LogUtil.d(TAG, "onCreateLoader");
 
+        this.isLoading = true;
         // Instagram API へリクエストを投げる
         HttpAsyncLoader loader = new HttpAsyncLoader(this, this.mList.getNextUrl());
         loader.forceLoad();
@@ -89,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Json文字列を変換してリストに保存
         parseInstagramJson.loadJson(data);
         updateAdapter();
+        isLoading = false;
     }
 
     @Override
