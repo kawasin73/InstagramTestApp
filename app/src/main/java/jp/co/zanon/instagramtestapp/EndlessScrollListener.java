@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
  * Created by shintaro1 on 15/07/24.
  */
 public abstract class EndlessScrollListener extends RecyclerView.OnScrollListener {
+    private final String TAG = getClass().getSimpleName();
     int firstVisibleItem, visibleItemCount, totalItemCount;
     private int previousTotal = 0;
     private boolean loading = true;
@@ -25,7 +26,9 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
         visibleItemCount = recyclerView.getChildCount();
         totalItemCount = mGridLayoutManager.getItemCount();
         firstVisibleItem = mGridLayoutManager.findFirstVisibleItemPosition();
-
+        LogUtil.d(TAG, "visibleItemCount="+visibleItemCount);
+        LogUtil.d(TAG, "totalItemCount="+totalItemCount);
+        LogUtil.d(TAG, "firstVisibleItem="+firstVisibleItem);
         if (loading) {
             if (totalItemCount > previousTotal) {
                 loading = false;
@@ -33,7 +36,7 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
             }
         }
 
-        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleItemCount)) {
+        if (!loading && (totalItemCount - 1) <= (firstVisibleItem + visibleItemCount)) {
             current_page++;
 
             onLoadMore(current_page);
