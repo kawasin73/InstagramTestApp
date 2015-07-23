@@ -46,31 +46,42 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         //最初のページのURLをセットする
         mList = new InstagramList(Property.getFirstUrl("iQON"));
+        //Json解析クラスを初期化
         parseInstagramJson = new ParseInstagramJson(mList);
 
         // RecyclerView の 初期設定
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
-        //グリッドの個数返却処理
-        ((GridLayoutManager) mRecyclerView.getLayoutManager()).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int i) {
-                return 1;
-            }
-        });
+        initRecyclerView();
 
+        // Adapter をセットする
+        setAdapter();
+
+        //最初のデータローディングを開始
+        startLoading();
+
+    }
+
+    private void initRecyclerView() {
+        // GridLayoutManagerをセット
+        // Gridは３列で表示
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
+
+        // 画面下までのスクロールを検出
         mRecyclerView.addOnScrollListener(new EndlessScrollListener((GridLayoutManager) mRecyclerView.getLayoutManager()) {
             @Override
             public void onLoadMore(int current_page) {
                 Toast.makeText(MainActivity.this, "test", Toast.LENGTH_SHORT).show();
+                // データ取得中でなければ、データを取得
                 if (!MainActivity.this.isLoading)
                     startLoading();
             }
         });
 
-        mRecyclerView.addOnItemTouchListener(new ItemClickListener(mRecyclerView){
+        // 各アイテムに対するクリックリスナーを登録
+        mRecyclerView.addOnItemTouchListener(new ItemClickListener(mRecyclerView) {
 
             @Override
             boolean performItemClick(RecyclerView parent, View view, int position, long id) {
+                // クリックされたら、SubActivityで大きな画像を表示する
                 InstagramItem item = mList.getList().get(position);
                 Intent intent = new Intent(MainActivity.this, SubActivity.class);
                 intent.putExtra("url", item.standard);
@@ -80,13 +91,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             boolean performItemLongClick(RecyclerView parent, View view, int position, long id) {
+                //　長押しの場合
                 return false;
             }
         });
 
-        setAdapter();
-
-        startLoading();
 
     }
 
@@ -97,14 +106,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void startLoading(){
+        // 非同期でデータを取得
         getLoaderManager().restartLoader(this.count, null, this);
         LogUtil.d(TAG, "count=" + Integer.toString(this.count));
         this.count++;
-    }
-
-    private void updateAdapter() {
-        // 情報を更新
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -124,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         LogUtil.d(TAG, "onLoadFinished onCreateLoader count="+Integer.toString(loader.getId()));
         // Json文字列を変換してリストに保存
         parseInstagramJson.loadJson(data);
-        updateAdapter();
+        // recyclerViewの表示を更新
+        adapter.notifyDataSetChanged();
         isLoading = false;
     }
 

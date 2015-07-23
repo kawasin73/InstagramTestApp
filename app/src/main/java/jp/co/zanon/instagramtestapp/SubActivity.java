@@ -17,6 +17,7 @@ public class SubActivity extends AppCompatActivity {
 
     @Bind(R.id.image_view)
     SquaredImageView mImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
