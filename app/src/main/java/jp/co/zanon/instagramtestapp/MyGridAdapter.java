@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,9 +16,11 @@ import java.util.List;
 public class MyGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String TAG = getClass().getSimpleName();
     private LayoutInflater mLayoutInflater;
-    private ArrayList<InstagramItem> mItems;
+    private Context context;
+    private List<InstagramItem> mItems;
 
-    public MyGridAdapter(Context context, ArrayList<InstagramItem> items){
+    public MyGridAdapter(Context context, List<InstagramItem> items){
+        this.context = context;
         mLayoutInflater = LayoutInflater.from(context);
         mItems = items;
     }
@@ -29,10 +33,10 @@ public class MyGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         InstagramItem item = mItems.get(position);
-
         InstagramViewHolder instagramHolder = (InstagramViewHolder) holder;
-        instagramHolder.getTextView().setText(item.thumbnail);
-        LogUtil.d(TAG, "onBindViewHolder: item.thumbnail="+item.thumbnail);
+
+        // 画像を取得して挿入
+        Picasso.with(this.context).load(item.thumbnail).into(instagramHolder.getImageView());
     }
 
     @Override

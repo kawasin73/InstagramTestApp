@@ -1,30 +1,19 @@
 package jp.co.zanon.instagramtestapp;
 
-import android.os.AsyncTask;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>{
     private final String TAG = getClass().getSimpleName();
 
     @Bind(R.id.toolbar)
@@ -32,9 +21,9 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    private ArrayList<InstagramItem> list;
-    private MyGridAdapter gridAdapter;
-    private InstagramInfo instagramInfo;
+    private MyGridAdapter adapter;
+    private InstagramList mList;
+    private ParseInstagramJson parseInstagramJson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +31,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        // ツールバーの設定
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
         getSupportActionBar().setTitle(R.string.hello_world);
 
-
         //最初のページのURLをセットする
-        instagramInfo = new InstagramInfo("https://api.instagram.com/v1/tags/iQON/media/recent?client_id=94569f2163b140d696814954f18b5987");
+        mList = new InstagramList(Property.getFirstUrl("iQON"));
+        parseInstagramJson = new ParseInstagramJson(mList);
 
+        // RecyclerView の 初期設定
         mRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
         //グリッドの個数返却処理
         ((GridLayoutManager) mRecyclerView.getLayoutManager()).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -59,58 +51,51 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        list = new ArrayList<InstagramItem>();
-        gridAdapter = new MyGridAdapter(this, list);
-        mRecyclerView.setAdapter(gridAdapter);
+
+        setAdapter();
+
         getRequest();
 
     }
 
-    private void updateAdapter() {
-        list.clear();
-        ArrayList<InstagramItem> clist = instagramInfo.getList();
-        for (InstagramItem item : clist) {
-            list.add(item);
-            LogUtil.d(TAG, "item.thumbnail = " + item.thumbnail);
-        }
-
-        //GridViewスタイルのAdapterを設定
-        gridAdapter.notifyDataSetChanged();
-        LogUtil.d(TAG, "adapter Count="+Integer.toString(gridAdapter.getItemCount()));
+    private void setAdapter(){
+        // adapterを初期化してセットする。
+        adapter = new MyGridAdapter(this, mList.getList());
+        mRecyclerView.setAdapter(adapter);
     }
 
     public void getRequest(){
-
-        new AsyncTask<Void, Void, String>(){
-            @Override
-            protected String doInBackground(Void... voids) {
-                String result = null;
-
-                Request request = new Request.Builder()
-                        .url(instagramInfo.getNextUrl())
-                        .get()
-                        .build();
-
-                OkHttpClient client = new OkHttpClient();
-
-                try {
-                    Response response = client.newCall(request).execute();
-                    result = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                return result;
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                LogUtil.d(TAG, result);
-                instagramInfo.loadJson(result);
-                updateAdapter();
-            }
-        }.execute();
+        getLoaderManager().restartLoader(0, null, this);
     }
+
+    private void updateAdapter() {
+        // 情報を更新
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public Loader<String> onCreateLoader(int id, Bundle args) {
+        LogUtil.d(TAG, "onCreateLoader");
+
+        // Instagram API へリクエストを投げる
+        HttpAsyncLoader loader = new HttpAsyncLoader(this, this.mList.getNextUrl());
+        loader.forceLoad();
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<String> loader, String data) {
+        LogUtil.d(TAG, "loaderFinish");
+        // Json文字列を変換してリストに保存
+        parseInstagramJson.loadJson(data);
+        updateAdapter();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<String> loader) {
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,4 +118,5 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }

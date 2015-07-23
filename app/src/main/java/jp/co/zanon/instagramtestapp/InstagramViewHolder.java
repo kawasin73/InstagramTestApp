@@ -2,6 +2,7 @@ package jp.co.zanon.instagramtestapp;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -12,15 +13,15 @@ import butterknife.ButterKnife;
  */
 public class InstagramViewHolder extends RecyclerView.ViewHolder {
 
-    @Bind(R.id.textView)
-    TextView mTextView;
+    @Bind(R.id.image_view)
+    SquaredImageView mImageView;
 
     public InstagramViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    public TextView getTextView() {
-        return mTextView;
+    public ImageView getImageView() {
+        return mImageView;
     }
 }
