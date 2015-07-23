@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
@@ -26,4 +30,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.0'
 
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.squareup.okhttp:okhttp:2.0.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.0'
 }
