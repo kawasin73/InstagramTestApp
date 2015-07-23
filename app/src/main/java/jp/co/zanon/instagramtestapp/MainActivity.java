@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // ツールバーの設定
         setSupportActionBar(mToolbar);
         getSupportActionBar().setLogo(R.mipmap.ic_launcher);
-        getSupportActionBar().setTitle(R.string.hello_world);
+        getSupportActionBar().setTitle(R.string.app_name);
 
         //最初のページのURLをセットする
         mList = new InstagramList(Property.getFirstUrl("iQON"));
@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.addOnScrollListener(new EndlessScrollListener((GridLayoutManager) mRecyclerView.getLayoutManager()) {
             @Override
             public void onLoadMore(int current_page) {
-                Toast.makeText(MainActivity.this, "test", Toast.LENGTH_SHORT).show();
                 // データ取得中でなければ、データを取得
                 if (!MainActivity.this.isLoading)
                     startLoading();
@@ -85,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 InstagramItem item = mList.getList().get(position);
                 Intent intent = new Intent(MainActivity.this, SubActivity.class);
                 intent.putExtra("url", item.standard);
+                intent.putExtra("msg", item.msg);
                 startActivity(intent);
                 return false;
             }
@@ -155,9 +155,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }

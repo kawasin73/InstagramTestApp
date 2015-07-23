@@ -4,19 +4,27 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SubActivity extends AppCompatActivity {
 
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
     @Bind(R.id.image_view)
     SquaredImageView mImageView;
+    @Bind(R.id.text)
+    TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +33,34 @@ public class SubActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("url")) {
+        // ツールバーの設定
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+        getSupportActionBar().setTitle(R.string.app_name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        // 表示情報をセット
+        setExtras(getIntent());
+
+    }
+
+    private void setExtras(Intent intent) {
+        if (intent == null)
+            return;
+        if (intent.hasExtra("url")){
+            // 画像の表示
             String url = intent.getStringExtra("url");
             Picasso.with(this).load(url).into(mImageView);
         }
-
+        if (intent.hasExtra("msg") && intent.getStringExtra("msg").length() > 0 ){
+            // テキスト文の表示
+            String msg = intent.getStringExtra("msg");
+            mTextView.setText(msg);
+        } else {
+            // テキストがない場合は、テキストビューを見えなくする
+            mTextView.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -48,9 +78,14 @@ public class SubActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id){
+            case android.R.id.home:
+                finish();
+                break;
+            default:
+                break;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
