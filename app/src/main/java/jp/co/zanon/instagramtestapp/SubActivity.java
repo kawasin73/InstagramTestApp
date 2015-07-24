@@ -5,12 +5,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
@@ -19,12 +23,16 @@ import butterknife.OnClick;
 
 public class SubActivity extends AppCompatActivity {
 
+    private final String TAG = getClass().getSimpleName();
+
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.image_view)
     SquaredImageView mImageView;
     @Bind(R.id.text)
     TextView mTextView;
+    @Bind(R.id.prog_bar)
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,20 +54,26 @@ public class SubActivity extends AppCompatActivity {
     }
 
     private void setExtras(Intent intent) {
-        if (intent == null)
+        if (intent == null) {
+            Toast.makeText(this, "システムエラー", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "intent is not found");
             return;
+        }
+
         if (intent.hasExtra("url")){
+            // プログレスバーの表示
+            mProgressBar.setVisibility(View.VISIBLE);
             // 画像の表示
             String url = intent.getStringExtra("url");
-            Picasso.with(this).load(url).into(mImageView);
+            Picasso.with(this).load(url).into(this.mImageView, new ImageLoadedCallback(this, mProgressBar));
         }
         if (intent.hasExtra("msg") && intent.getStringExtra("msg").length() > 0 ){
             // テキスト文の表示
             String msg = intent.getStringExtra("msg");
-            mTextView.setText(msg);
+            this.mTextView.setText(msg);
         } else {
             // テキストがない場合は、テキストビューを見えなくする
-            mTextView.setVisibility(View.INVISIBLE);
+            this.mTextView.setVisibility(View.GONE);
         }
     }
 

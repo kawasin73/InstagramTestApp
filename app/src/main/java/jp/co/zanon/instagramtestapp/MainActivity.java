@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private ParseInstagramJson parseInstagramJson;
 
     private boolean isLoading = false;
+    private boolean noMoreLoading = false;
 
     int count = 0;
     @Override
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         //最初のページのURLをセットする
         mList = new InstagramList(Property.getFirstUrl("iQON"));
+
         //Json解析クラスを初期化
         parseInstagramJson = new ParseInstagramJson(mList);
 
@@ -69,9 +71,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.addOnScrollListener(new EndlessScrollListener((GridLayoutManager) mRecyclerView.getLayoutManager()) {
             @Override
             public void onLoadMore(int current_page) {
-                // データ取得中でなければ、データを取得
-                if (!MainActivity.this.isLoading)
-                    startLoading();
+                startLoading();
             }
         });
 
@@ -106,15 +106,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void startLoading(){
+
+        if (this.noMoreLoading || this.isLoading)
+            return;
+        if (this.mList.getNextUrl() == null || this.mList.getNextUrl().length() == 0) {
+            // next_url がセットされていない場合これ以上の画像は見つからない
+            this.noMoreLoading = true;
+            Toast.makeText(this, "これ以上画像は見つかりません。", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // データ取得中でなければ、データを取得
         // 非同期でデータを取得
         getLoaderManager().restartLoader(this.count, null, this);
-        LogUtil.d(TAG, "count=" + Integer.toString(this.count));
+        LogUtil.d(TAG, "restartLoader id=" + Integer.toString(this.count));
         this.count++;
     }
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
-        LogUtil.d(TAG, "onCreateLoader");
         LogUtil.d(TAG, "onCreateLoader id="+Integer.toString(id));
         this.isLoading = true;
         // Instagram API へリクエストを投げる
@@ -125,8 +135,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        LogUtil.d(TAG, "onLoadFinished");
-        LogUtil.d(TAG, "onLoadFinished onCreateLoader count="+Integer.toString(loader.getId()));
+        LogUtil.d(TAG, "onLoadFinished onCreateLoader id="+Integer.toString(loader.getId()));
+
+        if (data == null) {
+            Toast.makeText(this, "ネットワークエラー", Toast.LENGTH_SHORT).show();
+            this.noMoreLoading = true;
+            this.isLoading = false;
+            return;
+        }
         // Json文字列を変換してリストに保存
         parseInstagramJson.loadJson(data);
         // recyclerViewの表示を更新

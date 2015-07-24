@@ -33,7 +33,14 @@
             android:background="@color/text_background"
             android:padding="@dimen/textBox_padding"
             />
+        <ProgressBar
+            android:id="@+id/prog_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
 
+            style="?android:attr/progressBarStyle"
+            android:visibility="gone"/>
     </RelativeLayout>
 
 </LinearLayout>

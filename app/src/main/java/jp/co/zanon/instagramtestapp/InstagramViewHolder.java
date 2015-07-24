@@ -3,6 +3,7 @@ package jp.co.zanon.instagramtestapp;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -15,6 +16,8 @@ public class InstagramViewHolder extends RecyclerView.ViewHolder {
 
     @Bind(R.id.image_view)
     SquaredImageView mImageView;
+    @Bind(R.id.prog_bar)
+    ProgressBar mProgressBar;
 
     public InstagramViewHolder(View itemView) {
         super(itemView);
@@ -23,5 +26,8 @@ public class InstagramViewHolder extends RecyclerView.ViewHolder {
 
     public ImageView getImageView() {
         return mImageView;
+    }
+    public ProgressBar getProgressBar() {
+        return mProgressBar;
     }
 }

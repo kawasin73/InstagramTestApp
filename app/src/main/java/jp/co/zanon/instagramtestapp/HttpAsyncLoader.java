@@ -14,6 +14,7 @@ import java.io.IOException;
  */
 public class HttpAsyncLoader extends AsyncTaskLoader<String> {
 
+    private final String TAG = getClass().getSimpleName();
     private String url;
 
     public HttpAsyncLoader(Context context, String url) {
@@ -23,25 +24,24 @@ public class HttpAsyncLoader extends AsyncTaskLoader<String> {
 
     @Override
     public String loadInBackground() {
-        String result = null;
-
         // okHttpを利用して、APIへリクエストを投げる
         // 結果はStringで result に入る
+        LogUtil.d(TAG, "url="+this.url);
         Request request = new Request.Builder()
                 .url(this.url)
                 .get()
                 .build();
 
         OkHttpClient client = new OkHttpClient();
-
         try {
             Response response = client.newCall(request).execute();
-            result = response.body().string();
+            // JSONを Stringのままで返す
+            return response.body().string();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // JSONを Stringのままで返す
-        return result;
+        //エラーの時は、 null を返す。
+        return null;
     }
 }

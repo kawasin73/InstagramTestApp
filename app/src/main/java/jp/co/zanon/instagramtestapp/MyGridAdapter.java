@@ -3,7 +3,9 @@ package jp.co.zanon.instagramtestapp;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.squareup.picasso.Picasso;
 
@@ -35,8 +37,12 @@ public class MyGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         InstagramItem item = mItems.get(position);
         InstagramViewHolder instagramHolder = (InstagramViewHolder) holder;
 
+        SquaredImageView imageView = (SquaredImageView) instagramHolder.getImageView();
+        ProgressBar progressBar = instagramHolder.getProgressBar();
+
+        progressBar.setVisibility(View.VISIBLE);
         // 画像を取得して挿入
-        Picasso.with(this.context).load(item.thumbnail).into(instagramHolder.getImageView());
+        Picasso.with(this.context).load(item.thumbnail).into(imageView, new ImageLoadedCallback(null, progressBar));
     }
 
     @Override
