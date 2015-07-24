@@ -92,9 +92,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             boolean performItemClick(RecyclerView parent, View view, int position, long id) {
-                if (position > mList.getList().size()){
+                LogUtil.d(TAG, "position="+position);
+                LogUtil.d(TAG, "mList.getList().size()="+mList.getList().size());
+                if (position < 0 || position + 1 > mList.getList().size()){
                     // スワイプリフレッシュを行い　ローディング中にアイテムをクリックされた場合、
-                    // リストにないアイテムをposition に渡す可能性がある。
+                    // リストにないアイテムのposition に渡す可能性がある。
                     return false;
                 }
                 // クリックされたら、SubActivityで大きな画像を表示する
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 MainActivity.this.count = 0;
                 MainActivity.this.noMoreLoading = false;
                 mScrollListener.refresh();
+                adapter.notifyDataSetChanged();
                 // 一覧を取得し直す
                 startLoading();
             }
