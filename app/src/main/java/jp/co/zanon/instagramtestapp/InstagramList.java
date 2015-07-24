@@ -13,20 +13,35 @@ public class InstagramList {
     // InstagramItemのリスト
     private List<InstagramItem> list = new LinkedList<InstagramItem>();
 
-    // 次の画像を取得するためのURL
-    private String nextUrl = null;
+    private String firstUrl = null; // 最初のURL
+    private String nextUrl = null;  // 次の画像を取得するためのURL
 
     public InstagramList(String nextUrl) {
-        this.nextUrl = nextUrl;
+        setFirseUrl(nextUrl);
     }
+
     public List<InstagramItem> getList() {
         return this.list;
     }
     public String getNextUrl() {
         return this.nextUrl;
     }
+
+    // リストをクリアして、最初のURLを設定
+    public void setFirseUrl(String nextUrl) {
+        this.firstUrl = nextUrl;
+        this.nextUrl = nextUrl;
+        clear();
+    }
+
+    //次のURLを設定
     public void setNextUrl(String nextUrl) {
         this.nextUrl = nextUrl;
+    }
+
+    // リストをクリアして、最初のURLを再設定
+    public void refresh() {
+        setFirseUrl(this.firstUrl);
     }
 
     // 保持しているリストのクリア

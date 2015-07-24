@@ -17,6 +17,9 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
 
     public EndlessScrollListener(GridLayoutManager gridLayoutManager) {
         this.mGridLayoutManager = gridLayoutManager;
+
+        // カウントを初期化
+        refresh();
     }
 
     @Override
@@ -29,6 +32,7 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
         LogUtil.d(TAG, "visibleItemCount="+visibleItemCount);
         LogUtil.d(TAG, "totalItemCount="+totalItemCount);
         LogUtil.d(TAG, "firstVisibleItem="+firstVisibleItem);
+        LogUtil.d(TAG, "previousTotal="+previousTotal);
         if (loading) {
             if (totalItemCount > previousTotal) {
                 loading = false;
@@ -46,4 +50,10 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
     }
 
     public abstract void onLoadMore(int current_page);
+
+    public void refresh(){
+        this.previousTotal = 0;
+        this.current_page = 1;
+        this.loading = true;
+    }
 }
