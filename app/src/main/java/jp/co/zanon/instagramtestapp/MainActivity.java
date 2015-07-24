@@ -3,15 +3,16 @@ package jp.co.zanon.instagramtestapp;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -63,10 +64,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setAdapter();
 
         // SwipeRefreshLayout の初期設定
-        initSwipeRefleshLayout();
+        initSwipeRefreshLayout();
 
         //最初のデータローディングを開始
-        startLoading();
+        setNewQuery("iQON");
 
     }
 
@@ -93,10 +94,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             boolean performItemClick(RecyclerView parent, View view, int position, long id) {
-                LogUtil.d(TAG, "position="+position);
-                LogUtil.d(TAG, "mList.getList().size()="+mList.getList().size());
-                
-                if (position < 0 || position + 1 > mList.getList().size()){
+                LogUtil.d(TAG, "position=" + position);
+                LogUtil.d(TAG, "mList.getList().size()=" + mList.getList().size());
+
+                if (position < 0 || position + 1 > mList.getList().size()) {
                     // スワイプリフレッシュを行い　ローディング中にアイテムをクリックされた場合、
                     // リストにないアイテムのposition に渡す可能性がある。
                     return false;
@@ -126,22 +127,44 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setAdapter(adapter);
     }
 
-    private void initSwipeRefleshLayout() {
+    private void initSwipeRefreshLayout() {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //実行中の一覧取得を破棄
-                getLoaderManager().destroyLoader(count);
-                // リストの中身、ローダーのカウント、スクロールリスナーをリセット
-                mList.refresh();
-                MainActivity.this.count = 0;
-                MainActivity.this.noMoreLoading = false;
-                mScrollListener.refresh();
-                adapter.notifyDataSetChanged();
-                // 一覧を取得し直す
-                startLoading();
+                // 検索を始めからやり直す
+                refresh();
             }
         });
+    }
+
+    /**
+     * 検索を始めからやり直す
+     */
+    public void refresh(){
+        //実行中の一覧取得アクセスを破棄
+        //常に実行されている Loader は１つだけ
+        getLoaderManager().destroyLoader(count);
+
+        // リストの中身、ローダーのカウント、スクロールリスナーをリセット
+        mList.refresh();
+        adapter.notifyDataSetChanged();
+
+        MainActivity.this.count = 0;
+        MainActivity.this.noMoreLoading = false;
+        mScrollListener.refresh();
+
+        // 一覧を取得し直す
+        startLoading();
+    }
+
+    private void setNewQuery(String query) {
+        // 検索URLをセット
+        mList.setFirseUrl(Property.getFirstUrl(query));
+        // サブタイトルにタグを表示
+        getSupportActionBar().setSubtitle("#"+query);
+
+        // 検索を始めからやり直す
+        refresh();
     }
 
     public void startLoading(){
@@ -203,7 +226,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                setNewQuery(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
