@@ -34,6 +34,9 @@ public class SubActivity extends AppCompatActivity {
     @Bind(R.id.prog_bar)
     ProgressBar mProgressBar;
 
+    private boolean isMsgSet = false;
+    private boolean isTextShow = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,15 +71,37 @@ public class SubActivity extends AppCompatActivity {
             Picasso.with(this).load(url).into(this.mImageView, new ImageLoadedCallback(this, mProgressBar));
         }
         if (intent.hasExtra("msg") && intent.getStringExtra("msg").length() > 0 ){
+            this.isMsgSet = true;
+            this.isTextShow = true;
             // テキスト文の表示
             String msg = intent.getStringExtra("msg");
             this.mTextView.setText(msg);
         } else {
+            this.isMsgSet = false;
+            this.isTextShow = false;
             // テキストがない場合は、テキストビューを見えなくする
             this.mTextView.setVisibility(View.GONE);
         }
     }
 
+    @OnClick(R.id.sub_layout)
+    void toggleText(){
+        //画面がタップされた時
+
+        // メッセージがセットされていない場合はテキストは常に非表示
+        if (!isMsgSet)
+            return;
+
+        // テキストビューの表示・非表示を切り替える。
+        if (isTextShow){
+            mTextView.setVisibility(View.INVISIBLE);
+            isTextShow = false;
+        } else {
+            mTextView.setVisibility(View.VISIBLE);
+            isTextShow = true;
+        }
+
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

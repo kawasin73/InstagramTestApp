@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // SwipeRefreshLayout の初期設定
         initSwipeRefleshLayout();
+
         //最初のデータローディングを開始
         startLoading();
 
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             boolean performItemClick(RecyclerView parent, View view, int position, long id) {
                 LogUtil.d(TAG, "position="+position);
                 LogUtil.d(TAG, "mList.getList().size()="+mList.getList().size());
+                
                 if (position < 0 || position + 1 > mList.getList().size()){
                     // スワイプリフレッシュを行い　ローディング中にアイテムをクリックされた場合、
                     // リストにないアイテムのposition に渡す可能性がある。
