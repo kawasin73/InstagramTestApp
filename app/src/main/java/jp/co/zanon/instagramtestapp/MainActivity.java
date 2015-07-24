@@ -3,6 +3,7 @@ package jp.co.zanon.instagramtestapp;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.os.PersistableBundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import icepick.Icepick;
+import icepick.State;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>{
     private final String TAG = getClass().getSimpleName();
@@ -29,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
+    @State String query;
+
     private MyGridAdapter adapter;
     private InstagramList mList;
     private ParseInstagramJson parseInstagramJson;
@@ -39,12 +44,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private boolean noMoreLoading = false;
 
     int count = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+        Icepick.restoreInstanceState(this, savedInstanceState);
+
+        if (this.query == null) {
+            this.query = "iQON";
+        }
 
         // ツールバーの設定
         setSupportActionBar(mToolbar);
@@ -52,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportActionBar().setTitle(R.string.app_name);
 
         //最初のページのURLをセットする
-        mList = new InstagramList(Property.getFirstUrl("iQON"));
+        mList = new InstagramList(Property.getFirstUrl(query));
 
         //Json解析クラスを初期化
         parseInstagramJson = new ParseInstagramJson(mList);
@@ -67,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         initSwipeRefreshLayout();
 
         //最初のデータローディングを開始
-        setNewQuery("iQON");
+        setNewQuery(query);
 
     }
 
@@ -162,6 +173,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mList.setFirseUrl(Property.getFirstUrl(query));
         // サブタイトルにタグを表示
         getSupportActionBar().setSubtitle("#"+query);
+        // savedInstanseState に保存するために query を保管
+        this.query = query;
 
         // 検索を始めからやり直す
         refresh();
@@ -221,6 +234,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Icepick.saveInstanceState(this, outState);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
