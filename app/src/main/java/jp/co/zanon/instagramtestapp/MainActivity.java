@@ -19,11 +19,10 @@ import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import icepick.Icepick;
-import icepick.State;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>{
     private final String TAG = getClass().getSimpleName();
+    public static final String KEY_QUERY = "key_query";
 
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Bind(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    @State String query;
+    String query;
 
     private MyGridAdapter adapter;
     private InstagramList mList;
@@ -51,10 +50,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
-        Icepick.restoreInstanceState(this, savedInstanceState);
 
-        if (this.query == null) {
-            this.query = "iQON";
+        this.query = "iQON";
+
+        if (savedInstanceState != null) {
+            // 保存されていたタグ名をセット
+            this.query = savedInstanceState.getString(MainActivity.KEY_QUERY, "iQON");
         }
 
         // ツールバーの設定
@@ -237,7 +238,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Icepick.saveInstanceState(this, outState);
+
+        // タグ名を保存
+        outState.putString(MainActivity.KEY_QUERY, this.query);
     }
 
     @Override
