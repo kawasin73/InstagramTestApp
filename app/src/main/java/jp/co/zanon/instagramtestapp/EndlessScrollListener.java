@@ -26,25 +26,29 @@ public abstract class EndlessScrollListener extends RecyclerView.OnScrollListene
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        visibleItemCount = recyclerView.getChildCount();
-        totalItemCount = mGridLayoutManager.getItemCount();
-        firstVisibleItem = mGridLayoutManager.findFirstVisibleItemPosition();
+        visibleItemCount = recyclerView.getChildCount();                      // 見えているアイテムの数
+        totalItemCount = mGridLayoutManager.getItemCount();                   // アダプターにセットされた全てのアイテムの数
+        firstVisibleItem = mGridLayoutManager.findFirstVisibleItemPosition(); // 見えているアイテムの上にある見えていないアイテムの数
         LogUtil.d(TAG, "visibleItemCount=" + visibleItemCount);
         LogUtil.d(TAG, "totalItemCount=" + totalItemCount);
         LogUtil.d(TAG, "firstVisibleItem=" + firstVisibleItem);
         LogUtil.d(TAG, "previousTotal=" + previousTotal);
+
+        // totalItemCountが増えたことを検出した時
         if (loading) {
             if (totalItemCount > previousTotal) {
+                // ロックを解除
                 loading = false;
+                // totalItemCountの値を保存
                 previousTotal = totalItemCount;
             }
         }
-
+        // 一番下までスクロールしたことを検出した時
         if (!loading && (totalItemCount - 1) <= (firstVisibleItem + visibleItemCount)) {
             current_page++;
 
             onLoadMore(current_page);
-
+            // totalItemCountの値が増えるまで、ロックをかける
             loading = true;
         }
     }
