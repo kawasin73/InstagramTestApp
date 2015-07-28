@@ -1,46 +1,46 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
-    tools:context="jp.co.zanon.instagramtestapp.SubActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="jp.co.zanon.instagramtestapp.SubActivity">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        android:elevation="5dp"
-        />
+        android:elevation="5dp" />
+
     <RelativeLayout
         android:id="@+id/sub_layout"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <jp.co.zanon.instagramtestapp.SquaredImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
+
         <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:textColor="@color/white"
             android:background="@color/text_background"
             android:padding="@dimen/textBox_padding"
-            />
+            android:textColor="@color/white" />
+
         <ProgressBar
             android:id="@+id/prog_bar"
+            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
 
-            style="?android:attr/progressBarStyle"
-            android:visibility="gone"/>
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
     </RelativeLayout>
 
 </LinearLayout>

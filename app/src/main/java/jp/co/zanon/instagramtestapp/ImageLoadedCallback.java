@@ -15,10 +15,11 @@ public class ImageLoadedCallback implements Callback {
     Context context;
     ProgressBar mProgressBar;
 
-    public ImageLoadedCallback (Context context){
+    public ImageLoadedCallback(Context context) {
         this.context = context;
     }
-    public ImageLoadedCallback (Context context, ProgressBar progressBar){
+
+    public ImageLoadedCallback(Context context, ProgressBar progressBar) {
         // contextをセット
         // contextの有無でToastを出すかどうかを切り分ける
         this.context = context;

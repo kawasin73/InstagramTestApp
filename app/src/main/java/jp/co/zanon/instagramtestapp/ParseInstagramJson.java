@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by shintaro1 on 15/07/23.
@@ -17,7 +14,7 @@ public class ParseInstagramJson {
     private final String TAG = getClass().getSimpleName();
     private InstagramList mList;
 
-    public ParseInstagramJson(InstagramList list){
+    public ParseInstagramJson(InstagramList list) {
         this.mList = list;
     }
 

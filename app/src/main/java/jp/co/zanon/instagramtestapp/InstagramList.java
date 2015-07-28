@@ -23,8 +23,14 @@ public class InstagramList {
     public List<InstagramItem> getList() {
         return this.list;
     }
+
     public String getNextUrl() {
         return this.nextUrl;
+    }
+
+    //次のURLを設定
+    public void setNextUrl(String nextUrl) {
+        this.nextUrl = nextUrl;
     }
 
     // リストをクリアして、最初のURLを設定
@@ -32,11 +38,6 @@ public class InstagramList {
         this.firstUrl = nextUrl;
         this.nextUrl = nextUrl;
         clear();
-    }
-
-    //次のURLを設定
-    public void setNextUrl(String nextUrl) {
-        this.nextUrl = nextUrl;
     }
 
     // リストをクリアして、最初のURLを再設定

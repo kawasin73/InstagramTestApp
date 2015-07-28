@@ -3,11 +3,10 @@ package jp.co.zanon.instagramtestapp;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
-import android.os.PersistableBundle;
+import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -20,10 +19,9 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String>{
-    private final String TAG = getClass().getSimpleName();
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
     public static final String KEY_QUERY = "key_query";
-
+    private final String TAG = getClass().getSimpleName();
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.swipe_refresh_layout)
@@ -32,17 +30,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     RecyclerView mRecyclerView;
 
     String query;
-
+    int count = 0;
     private MyGridAdapter adapter;
     private InstagramList mList;
     private ParseInstagramJson parseInstagramJson;
-
     private EndlessScrollListener mScrollListener;
-
     private boolean isLoading = false;
     private boolean noMoreLoading = false;
-
-    int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    private void setAdapter(){
+    private void setAdapter() {
         // adapterを初期化してセットする。
         adapter = new MyGridAdapter(this, mList.getList());
         mRecyclerView.setAdapter(adapter);
@@ -152,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     /**
      * 検索を始めからやり直す
      */
-    public void refresh(){
+    public void refresh() {
         //実行中の一覧取得アクセスを破棄
         //常に実行されている Loader は１つだけ
         getLoaderManager().destroyLoader(count);
@@ -173,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // 検索URLをセット
         mList.setFirseUrl(Property.getFirstUrl(query));
         // サブタイトルにタグを表示
-        getSupportActionBar().setSubtitle("#"+query);
+        getSupportActionBar().setSubtitle("#" + query);
         // savedInstanseState に保存するために query を保管
         this.query = query;
 
@@ -181,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         refresh();
     }
 
-    public void startLoading(){
+    public void startLoading() {
 
         if (this.noMoreLoading || this.isLoading)
             return;
@@ -201,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
-        LogUtil.d(TAG, "onCreateLoader id="+Integer.toString(id));
+        LogUtil.d(TAG, "onCreateLoader id=" + Integer.toString(id));
         this.isLoading = true;
         // Instagram API へリクエストを投げる
         HttpAsyncLoader loader = new HttpAsyncLoader(this, this.mList.getNextUrl());
@@ -211,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        LogUtil.d(TAG, "onLoadFinished onCreateLoader id="+Integer.toString(loader.getId()));
+        LogUtil.d(TAG, "onLoadFinished onCreateLoader id=" + Integer.toString(loader.getId()));
 
         // スワイプのくるくるを非表示
         mSwipeRefreshLayout.setRefreshing(false);

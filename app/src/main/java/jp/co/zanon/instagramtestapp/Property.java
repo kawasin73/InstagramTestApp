@@ -8,6 +8,6 @@ public class Property {
     public static final String INSTAGRAM_CLIENT_ID = "94569f2163b140d696814954f18b5987";
 
     public static String getFirstUrl(String tagName) {
-        return INSTAGRAM_URL+"/tags/"+tagName+"/media/recent?client_id="+INSTAGRAM_CLIENT_ID;
+        return INSTAGRAM_URL + "/tags/" + tagName + "/media/recent?client_id=" + INSTAGRAM_CLIENT_ID;
     }
 }

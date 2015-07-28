@@ -26,7 +26,7 @@ public class HttpAsyncLoader extends AsyncTaskLoader<String> {
     public String loadInBackground() {
         // okHttpを利用して、APIへリクエストを投げる
         // 結果はStringで result に入る
-        LogUtil.d(TAG, "url="+this.url);
+        LogUtil.d(TAG, "url=" + this.url);
         Request request = new Request.Builder()
                 .url(this.url)
                 .get()

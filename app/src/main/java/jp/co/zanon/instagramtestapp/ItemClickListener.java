@@ -11,13 +11,13 @@ import android.view.View;
 
 /**
  * RecyclerViewのアイテムのクリックを取得するイベントリスナー
- *
+ * <p/>
  * Created by yokmama on 15/05/07.
  */
-public abstract class ItemClickListener implements RecyclerView.OnItemTouchListener{
+public abstract class ItemClickListener implements RecyclerView.OnItemTouchListener {
     private final GestureDetectorCompat mGestureDetector;
 
-    public ItemClickListener(RecyclerView recyclerView){
+    public ItemClickListener(RecyclerView recyclerView) {
         //RecyclerViewに対するジェスチャーを検出するためGestureDetectorを生成
         mGestureDetector = new ItemClickGestureDetector(recyclerView.getContext(),
                 new ItemClickGestureListener(recyclerView));
@@ -92,7 +92,6 @@ public abstract class ItemClickListener implements RecyclerView.OnItemTouchListe
 
     /***
      * クリック処理のみ検出するGestureDetector
-     *
      */
     private class ItemClickGestureDetector extends GestureDetectorCompat {
         private final ItemClickGestureListener mGestureListener;
@@ -118,11 +117,11 @@ public abstract class ItemClickListener implements RecyclerView.OnItemTouchListe
     /***
      * クリック処理に応じて、シングルクリックかロングクリックか判定し、
      * それぞれ設定されたリスナーメソッドをコールする
-     *
      */
     private class ItemClickGestureListener extends GestureDetector.SimpleOnGestureListener {
         private final RecyclerView mRecyclerView;
         private View mTargetChild;
+
         public ItemClickGestureListener(RecyclerView recyclerView) {
             mRecyclerView = recyclerView;
         }

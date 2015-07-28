@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ public class MyGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context context;
     private List<InstagramItem> mItems;
 
-    public MyGridAdapter(Context context, List<InstagramItem> items){
+    public MyGridAdapter(Context context, List<InstagramItem> items) {
         this.context = context;
         mLayoutInflater = LayoutInflater.from(context);
         mItems = items;
