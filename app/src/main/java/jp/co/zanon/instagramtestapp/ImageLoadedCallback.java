@@ -20,7 +20,7 @@ public class ImageLoadedCallback implements Callback {
     }
     public ImageLoadedCallback (Context context, ProgressBar progressBar){
         // contextをセット
-        // contextの有無で　Toast を出すかどうかを切り分ける
+        // contextの有無でToastを出すかどうかを切り分ける
         this.context = context;
         this.mProgressBar = progressBar;
     }
