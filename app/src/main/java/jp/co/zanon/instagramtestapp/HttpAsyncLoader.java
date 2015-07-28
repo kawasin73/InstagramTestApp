@@ -41,7 +41,7 @@ public class HttpAsyncLoader extends AsyncTaskLoader<String> {
             e.printStackTrace();
         }
 
-        //エラーの時は、 null を返す。
+        //エラーの時は、 null を返す
         return null;
     }
 }

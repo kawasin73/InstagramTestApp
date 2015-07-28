@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
     public static final String KEY_QUERY = "key_query";
     private final String TAG = getClass().getSimpleName();
+
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.swipe_refresh_layout)
@@ -82,12 +83,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Gridは３列で表示
         mRecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
 
-        // スクロールリスナーを保管する。
-        // スクロールリスナーのメンバー変数 previous を変更するため
+        // スクロールリスナーを保管する
+        // スクロールリスナーのメンバー変数 previousTotal を変更するため
         mScrollListener = new EndlessScrollListener((GridLayoutManager) mRecyclerView.getLayoutManager()) {
             @Override
             public void onLoadMore(int current_page) {
                 LogUtil.d(TAG, "come to bottom");
+                // 一番下までスクロールされたら追加でデータを取得する
                 startLoading();
             }
         };
@@ -105,14 +107,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 if (position < 0 || position + 1 > mList.getList().size()) {
                     // スワイプリフレッシュを行い、ローディング中にアイテムをクリックされた場合、
-                    // リストにないアイテムのpositionに渡す可能性がある。
+                    // リストにないアイテムのpositionに渡す可能性がある
                     return false;
                 }
                 // クリックされたら、SubActivityで大きな画像を表示する
                 InstagramItem item = mList.getList().get(position);
                 Intent intent = new Intent(MainActivity.this, SubActivity.class);
-                intent.putExtra("url", item.standard);
-                intent.putExtra("msg", item.msg);
+                intent.putExtra(SubActivity.KEY_URL, item.standard);
+                intent.putExtra(SubActivity.KEY_MESSAGE, item.msg);
                 startActivity(intent);
                 return false;
             }
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void setAdapter() {
-        // adapterを初期化してセットする。
+        // adapterを初期化してセットする
         adapter = new MyGridAdapter(this, mList.getList());
         mRecyclerView.setAdapter(adapter);
     }
@@ -269,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-
 
         return super.onOptionsItemSelected(item);
     }

@@ -19,7 +19,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class SubActivity extends AppCompatActivity {
-
+    public static final String KEY_URL = "url";
+    public static final String KEY_MESSAGE = "msg";
     private final String TAG = getClass().getSimpleName();
 
     @Bind(R.id.toolbar)
@@ -64,16 +65,17 @@ public class SubActivity extends AppCompatActivity {
             // プログレスバーの表示
             mProgressBar.setVisibility(View.VISIBLE);
             // 画像の表示
-            String url = intent.getStringExtra("url");
+            String url = intent.getStringExtra(KEY_URL);
             Picasso.with(this).load(url).into(this.mImageView, new ImageLoadedCallback(this, mProgressBar));
         }
-        if (intent.hasExtra("msg") && intent.getStringExtra("msg").length() > 0) {
+        if (intent.hasExtra(KEY_MESSAGE) && intent.getStringExtra(KEY_MESSAGE).length() > 0) {
             this.isMsgSet = true;
             this.isTextShow = true;
             // テキスト文の表示
-            String msg = intent.getStringExtra("msg");
+            String msg = intent.getStringExtra(KEY_MESSAGE);
             this.mTextView.setText(msg);
         } else {
+            // TextViewを常に非表示
             this.isMsgSet = false;
             this.isTextShow = false;
             // テキストがない場合は、テキストビューを見えなくする
@@ -89,7 +91,7 @@ public class SubActivity extends AppCompatActivity {
         if (!isMsgSet)
             return;
 
-        // テキストビューの表示・非表示を切り替える。
+        // テキストビューの表示・非表示を切り替える
         if (isTextShow) {
             mTextView.setVisibility(View.INVISIBLE);
             isTextShow = false;
@@ -117,6 +119,7 @@ public class SubActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         switch (id) {
             case android.R.id.home:
+                // バックボタンが押されたらSubActivityを終了して、MainActivityに戻る
                 finish();
                 break;
             default:

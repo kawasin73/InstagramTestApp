@@ -41,7 +41,7 @@ public abstract class ItemClickListener implements RecyclerView.OnItemTouchListe
 
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean b) {
-        //子のViewのうち、OnTouchをインターセプトする必要が発生した場合に呼ばれる。
+        //子のViewのうち、OnTouchをインターセプトする必要が発生した場合に呼ばれる
     }
 
     /***

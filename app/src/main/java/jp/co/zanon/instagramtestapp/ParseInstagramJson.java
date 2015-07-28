@@ -28,10 +28,8 @@ public class ParseInstagramJson {
             // １つ１つの情報を取得
             Iterator<JsonNode> ite = root.path("data").elements();
             while (ite.hasNext()) {
-                JsonNode node = ite.next();
-
                 // リストに追加
-                mList.add(node);
+                mList.add(ite.next());
             }
         }
     }
